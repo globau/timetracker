@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# This script is run when your start is set to away - either manually or
+# automatically due to being idle.
+#
+# I use it to stop my music player, and to turn off the screen after 60
+# seconds.
+#
+# The cwd is set to ~/.timetracker, and disable-display-if-idle is included
+# with timetracker.
+
+# turn off screen if idle
+sleep 60
+./disable-display-if-idle

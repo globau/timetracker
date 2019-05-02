@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# This script is run when your start is set to back - either manually or
+# automatically due to no longer being idle.
+#
+# I use it to resume music playback if it was stopped by `on-away`.
+

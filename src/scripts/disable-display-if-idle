@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+# python2 because currently python3 doesn't ship with osx
+
+import os
+import re
+import subprocess
+import sys
+
+DEBUG = bool(os.getenv("DEBUG"))
+
+max_idle = 50
+if len(sys.argv) > 1 and sys.argv[1].isdigit():
+    max_idle = int(sys.argv[1])
+
+idle_time = 0
+for line in subprocess.check_output(
+    ["/usr/sbin/ioreg", "-c", "IOHIDSystem"]
+).splitlines():
+    m = re.search(r'"HIDIdleTime" = (\d+)', line)
+    if m:
+        idle_time = round(int(m.group(1)) / 1000000000)
+        if DEBUG:
+            print("idle for %s" % idle_time)
+        break
+
+if idle_time >= max_idle:
+    if DEBUG:
+        print("sleeping displays")
+    subprocess.run(["/usr/bin/pmset", "displaysleepnow"], check=True)
+else:
+    if DEBUG:
+        print("not idle for %s" % max_idle)

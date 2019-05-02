@@ -1,0 +1,6 @@
+#!/bin/bash
+cd "$( dirname $0 )"
+../Resources/terminal-notifier.app/Contents/MacOS/terminal-notifier \
+    -message 'This app provides notifications for Time Tracker.' \
+    -title 'Time Tracker' \
+    -sender 'uno.glob.timetracker'
