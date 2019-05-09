@@ -18,6 +18,7 @@ class Command(object):
         pass
 
 
+# noinspection PyUnresolvedReferences
 def load_commands(parser):
     # load all commands
     path = cfg.src_path / "commands"
@@ -26,7 +27,6 @@ def load_commands(parser):
 
     # add args
     for cls in Command.__subclasses__():
-        assert isinstance(cls, Command)
         command = cls.add_args(parser)
         if command:
             command.set_defaults(func=cls.execute)
