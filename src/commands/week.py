@@ -1,3 +1,5 @@
+from commands.status import Status
+
 import arrow
 import cfg
 import database
@@ -13,6 +15,9 @@ class Week(Command):
         command = parser.add_parser("week", aliases=["w"], help="summary of your week")
         command.add_argument(
             "date", nargs="?", default="today", help="date to report on"
+        )
+        command.add_argument(
+            "--status", "-s", action="store_true", help="also show current status"
         )
         return command
 
@@ -89,3 +94,6 @@ class Week(Command):
                     " %s" % ui.CHAR_CURRENT if current else "",
                 )
             )
+
+        if args.status:
+            Status.execute(None)

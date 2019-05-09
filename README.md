@@ -35,13 +35,15 @@ done
 08:12 Monday    ⦗+00:36⦘
 09:42 Tuesday   ⦗+02:06⦘
 08:01 Wednesday ⦗+00:25⦘
-07:38 Thursday  ⦗+00:02⦘
+07:38 Thursday  ⦗+00:02⦘ ←
+Working for 1h39m
 ```
 
 * This shows:
   * I've worked 33 hours 33 minutes so far this week.
   * I have 4 hours 27 minutes left before I hit my hours for the week.
   * On Monday I worked for 8 hours 12 minutes, which is 36 minutes over the hours for that day.
+  * I'm currently working, and have been for 1 hour 39 minutes.
 
 ## Uninstall
 

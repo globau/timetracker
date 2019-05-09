@@ -19,6 +19,6 @@ def main():
     setup_logger_file(cfg.log_file)
 
     if len(sys.argv) == 1:
-        sys.argv.append("week")
+        sys.argv.extend(["week", "--status"])
     args = parse_args()
     args.func(args)
