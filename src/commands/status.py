@@ -1,4 +1,3 @@
-import cfg
 import database
 import launchd
 import state

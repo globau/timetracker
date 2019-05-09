@@ -1,5 +1,4 @@
 import json
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -16,7 +15,8 @@ src_path = root_path / "src"
 settings_file = dot_path / "settings.json"
 terminal_notifier = (
     src_path
-    / "time-tracker.app/Contents/Resources/terminal-notifier.app/Contents/MacOS/terminal-notifier"
+    / "time-tracker.app/Contents/Resources/"
+      "terminal-notifier.app/Contents/MacOS/terminal-notifier"
 )
 
 

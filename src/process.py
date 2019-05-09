@@ -1,11 +1,8 @@
-import contextlib
 import logging
-import os
 import re
 import subprocess
-import sys
 
-from harness import Error, logger
+from harness import logger
 
 
 def command_shell_str(command):
