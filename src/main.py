@@ -1,24 +1,30 @@
-import argparse
+import importlib
 import sys
 
 import cfg
-from command import load_commands
+import click
+from click_alias import ClickAliasedGroup
 from harness import setup_logger_file
 
+click = click
+CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    commands = parser.add_subparsers(help="", metavar="  COMMAND", dest="command")
-    commands.required = True
-    load_commands(commands)
 
-    return parser.parse_args()
+@click.group(cls=ClickAliasedGroup, context_settings=CONTEXT_SETTINGS)
+def cli():
+    pass
 
 
 def main():
     setup_logger_file(cfg.log_file)
 
+    # load commands
+    path = cfg.src_path / "commands"
+    for name in [f.stem for f in sorted(path.glob("*.py"))]:
+        importlib.import_module("commands.%s" % name)
+
+    # default to showing week with status
     if len(sys.argv) == 1:
         sys.argv.extend(["week", "--status"])
-    args = parse_args()
-    args.func(args)
+
+    cli()

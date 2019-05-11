@@ -37,10 +37,12 @@ TEMPLATE = "\n".join(
 
 
 def pid_of():
-    # returns pid of running launch agent, or None if not installed, 0 if
+    # returns pid of running launch agent, None if not installed, 0 if
     # installed but not running
 
-    for line in check_output(["launchctl", "list"]).splitlines():
+    for line in check_output(
+        ["launchctl", "list"], debug_log_output=False
+    ).splitlines():
         line = line.split("\t")
         if line[-1] == NAME:
             return line[0]

@@ -5,7 +5,7 @@ import subprocess
 from harness import logger
 
 
-def command_shell_str(command):
+def _command_shell_str(command):
     find_unsafe = re.compile(r"[^\w@%+=:,./-]").search
 
     def shell_quote(s):
@@ -20,7 +20,7 @@ def command_shell_str(command):
 
 def call(command, **kwargs):
     command = [str(el) for el in command]
-    logger.debug("$ %s" % command_shell_str(command))
+    logger.debug("$ %s" % _command_shell_str(command))
     kwargs.setdefault("encoding", "UTF-8")
 
     return subprocess.call(command, **kwargs)
@@ -28,7 +28,7 @@ def call(command, **kwargs):
 
 def check_call(command, **kwargs):
     command = [str(el) for el in command]
-    logger.debug("$ %s" % command_shell_str(command))
+    logger.debug("$ %s" % _command_shell_str(command))
     kwargs.setdefault("encoding", "UTF-8")
 
     return subprocess.check_call(command, **kwargs)
@@ -36,7 +36,7 @@ def check_call(command, **kwargs):
 
 def check_output(command, debug_log_output=True, **kwargs):
     command = [str(el) for el in command]
-    logger.debug("$ %s" % command_shell_str(command))
+    logger.debug("$ %s" % _command_shell_str(command))
     kwargs.setdefault("encoding", "UTF-8")
 
     output = subprocess.check_output(command, **kwargs)

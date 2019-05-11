@@ -1,28 +1,17 @@
 import database
 import ui
-from command import Command
+from main import cli, click
 
 
-class Log(Command):
-    @staticmethod
-    def add_args(parser):
-        command = parser.add_parser("log", help="logs for a day")
-        command.add_argument(
-            "date", nargs="?", default="today", help="date to report on"
-        )
-        return command
+@click.argument("date", required=False, default="today")
+@cli.command(aliases=["l"], help="logs for a day")
+def log(date):
+    dt = ui.parse_date(date, context="day")
 
-    @staticmethod
-    def execute(args):
-        dt = ui.parse_date(args.date)
-
-        print(dt.format("ddd Do MMM"))
-        logs = database.logs(dt)
-        if logs:
-            for log in logs:
-                print(
-                    "%s %s %s"
-                    % (log.dt.format("HH:mm:ss"), log.state.upper(), log.reason)
-                )
-        else:
-            print("(empty)")
+    print(dt.format("ddd Do MMM"))
+    logs = database.logs(dt)
+    if logs:
+        for l in logs:
+            print("%s %s %s" % (l.dt.format("HH:mm:ss"), l.state.upper(), l.reason))
+    else:
+        print("(empty)")

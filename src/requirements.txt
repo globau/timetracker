@@ -1,2 +1,3 @@
-arrow
-python-dateutil
+arrow==0.13.1
+Click==7.0
+python-dateutil==2.8.0

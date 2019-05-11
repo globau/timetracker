@@ -1,14 +1,8 @@
-from command import Command
+from main import cli
 
 
-class Restart(Command):
-    @staticmethod
-    def add_args(parser):
-        command = parser.add_parser("restart", help="restart daemon")
-        return command
+@cli.command(help="restart daemon")
+def restart():
+    import launchd
 
-    @staticmethod
-    def execute(args):
-        import launchd
-
-        launchd.restart()
+    launchd.restart()

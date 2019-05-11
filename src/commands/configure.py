@@ -1,13 +1,7 @@
-from command import Command
+from main import cli
 
 
-class Configure(Command):
-    @staticmethod
-    def add_args(parser):
-        command = parser.add_parser("configure", help="install/configure timetracker")
-        return command
-
-    @staticmethod
-    def execute(args):
-        # implemented in src/setup.py::configure()
-        pass
+@cli.command(help="install/configure/uninstall")
+def configure():
+    # implemented in src/setup.py::configure()
+    pass

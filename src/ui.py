@@ -1,8 +1,10 @@
 import re
+import sys
 from datetime import datetime
 
 import arrow
 import cfg
+from harness import logger
 from process import call
 from terminal import coloured
 
@@ -10,16 +12,25 @@ CHAR_EDITED = "Δ"
 CHAR_CURRENT = "←"
 
 
-def parse_date(date_str):
+def parse_date(date_str, *, context):
     date_str = date_str.lower()
 
-    # today, yesterday, tomorrow
-    if date_str == "today" or date_str == "now":
-        return arrow.now(tz=cfg.time_zone).floor("day")
-    if date_str == "yesterday" or date_str == "yes" or date_str == "prev":
-        return arrow.now(tz=cfg.time_zone).shift(days=-1).floor("day")
-    if date_str == "tomorrow" or date_str == "tom" or date_str == "next":
-        return arrow.now(tz=cfg.time_zone).shift(days=1).floor("day")
+    if context == "day":
+        # today, yesterday, tomorrow
+        if date_str == "today" or date_str == "now":
+            return arrow.now(tz=cfg.time_zone).floor("day")
+        if date_str == "yesterday" or date_str == "yes" or date_str == "prev":
+            return arrow.now(tz=cfg.time_zone).shift(days=-1).floor("day")
+        if date_str == "tomorrow" or date_str == "tom" or date_str == "next":
+            return arrow.now(tz=cfg.time_zone).shift(days=1).floor("day")
+
+    elif context == "week":
+        # today
+        if date_str == "today" or date_str == "now":
+            return arrow.now(tz=cfg.time_zone).floor("day")
+        # last week
+        if date_str == "last":
+            return arrow.now(tz=cfg.time_zone).floor("day").shift(days=-7)
 
     # yyyy-mm-dd, yyyy/mm/dd, yyyymmdd
     m = re.search(r"^(20\d\d)[-/]?(0\d|1[012])[-/]?([012]\d|3[01])$", date_str)
@@ -50,14 +61,15 @@ def parse_date(date_str):
 
 def parse_adjustment(adjustment_str):
     # returns minutes
-    m = re.search(
-        r"^([+-]\d*(?:\.\d+)?)(m|minutes?|h|hours?|d|days?)$",
-        adjustment_str,
-        re.IGNORECASE,
-    )
     try:
+        m = re.search(
+            r"^([+-]\d*(?:\.\d+)?)(m|minutes?|h|hours?|d|days?)$",
+            adjustment_str,
+            re.IGNORECASE,
+        )
         if not m:
             raise ValueError()
+
         adjust_amount = float(m.group(1))
         adjust_unit = m.group(2)
     except ValueError:
@@ -100,3 +112,46 @@ def notify(*, away=False, back=False):
         + ["-title", "Time Tracker"]
         + ["-sender", "uno.glob.timetracker"]
     )
+
+
+def input_ex(prompt, *, required=False, default=None, validator=None, options=None):
+    if validator:
+        assert callable(validator)
+
+    if options:
+        assert not validator
+
+        def _check_options(value):
+            value = value.lower()
+            if value not in options:
+                raise ValueError("")
+            return value
+
+        validator = _check_options
+
+    if default:
+        prompt = "%s (%s)" % (prompt, default)
+    prompt = "%s: " % prompt
+
+    try:
+        while True:
+            res = input(coloured("green", prompt)).strip()
+
+            if res == "":
+                if required:
+                    continue
+                if default:
+                    res = default
+
+            if validator:
+                try:
+                    res = validator(res)
+                except ValueError as e:
+                    if str(e):
+                        logger.error(e)
+                    continue
+
+            return res
+    except KeyboardInterrupt:
+        print("")
+        sys.exit(1)

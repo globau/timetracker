@@ -14,9 +14,8 @@ root_path = Path(__file__).parent.parent.resolve()
 src_path = root_path / "src"
 settings_file = dot_path / "settings.json"
 terminal_notifier = (
-    src_path
-    / "time-tracker.app/Contents/Resources/"
-      "terminal-notifier.app/Contents/MacOS/terminal-notifier"
+    src_path / "time-tracker.app/Contents/Resources/"
+    "terminal-notifier.app/Contents/MacOS/terminal-notifier"
 )
 
 
@@ -71,7 +70,7 @@ pid_file = dot_path / "timetracker.pid"
 on_away_file = dot_path / "on-away"
 on_back_file = dot_path / "on-back"
 
-# timing, all in seconds
+# timing
 idle_check_time = 60  # seconds
 
 # time zone

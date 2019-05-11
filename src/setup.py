@@ -74,50 +74,6 @@ def _install_state_scripts():
             shutil.copy(str(src_file), str(dst_file))
 
 
-def _prompt(prompt, *, required=False, default=None, validator=None):
-    from harness import logger
-    from terminal import coloured
-
-    assert callable(validator)
-
-    if default:
-        prompt = "%s (%s)" % (prompt, default)
-    prompt = "%s: " % prompt
-
-    try:
-        while True:
-            res = input(coloured("green", prompt)).strip()
-
-            if res == "":
-                if required:
-                    continue
-                if default:
-                    res = default
-
-            if validator:
-                try:
-                    res = validator(res)
-                except ValueError as e:
-                    if str(e):
-                        logger.error(e)
-                    continue
-
-            return res
-    except KeyboardInterrupt:
-        print("")
-        sys.exit(1)
-
-
-def _ask(prompt, options, *, default=None):
-    def _check(value):
-        value = value.lower()
-        if value not in options:
-            raise ValueError("")
-        return value
-
-    return _prompt(prompt, default=default, required=not default, validator=_check)
-
-
 def _check_tz(value):
     from dateutil import tz
 
@@ -150,6 +106,7 @@ def _configure_main():
     import cfg
     import database
     import launchd
+    import ui
 
     from harness import logger
 
@@ -157,10 +114,10 @@ def _configure_main():
     is_first_run = not cfg.settings_file.exists()
 
     settings = {
-        "work_week": _prompt(
+        "work_week": ui.input_ex(
             "Hours of work per week", default=cfg.work_week, validator=_check_int
         ),
-        "auto_away_time": _prompt(
+        "auto_away_time": ui.input_ex(
             "Auto-away idle time [minutes]",
             default=cfg.auto_away_time,
             validator=_check_int,
@@ -168,9 +125,9 @@ def _configure_main():
     }
 
     run_on_login = (
-        _ask(
+        ui.input_ex(
             "Run timetracker on login?",
-            "yn",
+            options="yn",
             default="y" if launchd.pid_of() is not None else "n",
         )
         == "y"

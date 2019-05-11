@@ -97,7 +97,7 @@ class MainWrapper(object):
             logger.error(e)
             sys.exit(1)
 
-        except (KeyError, NameError, TypeError) as e:
+        except (AssertionError, KeyError, NameError, TypeError) as e:
             # always show stack for coding issues
             logger.exception(e)
             sys.exit(1)
