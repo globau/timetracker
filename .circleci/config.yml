@@ -1,0 +1,12 @@
+version: 2
+jobs:
+  test:
+    docker:
+      - image: circleci/python:latest
+    steps:
+      - checkout
+      - run:
+          name: setup venv
+          command: |
+            cd src
+            make test
