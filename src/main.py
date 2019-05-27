@@ -1,8 +1,9 @@
 import importlib
 import sys
 
-import cfg
 import click
+
+import cfg
 from click_alias import ClickAliasedGroup
 from harness import setup_logger_file
 

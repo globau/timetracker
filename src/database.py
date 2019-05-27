@@ -4,6 +4,7 @@ from collections import namedtuple
 from contextlib import closing
 
 import arrow
+
 import cfg
 from date_range import DateRange
 from datetime_util import hms

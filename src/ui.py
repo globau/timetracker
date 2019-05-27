@@ -3,6 +3,7 @@ import sys
 from datetime import datetime
 
 import arrow
+
 import cfg
 from harness import logger
 from process import call
