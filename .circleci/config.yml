@@ -9,4 +9,9 @@ jobs:
           name: setup venv
           command: |
             cd src
+            make ../venv/updated
+      - run:
+          name: run tests
+          command: |
+            cd src
             make test
