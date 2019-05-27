@@ -21,7 +21,7 @@ test: ../venv/updated ../tt *.py **/*.py
 	$(isort) --check-only $^
 	$(flake8) $^
 
-.format: ../tt *.py **/*.py
+.format: ../venv/updated ../tt *.py **/*.py
 	$(black) $^
 	$(isort) $^
 	$(flake8) $^
