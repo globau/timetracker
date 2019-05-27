@@ -232,7 +232,6 @@ def active_ranges(start_dt, end_dt):
 
 
 def log_edit(dt, minutes, reason):
-    assert dt.datetime.tzname() == cfg.time_zone_name
     ymd = dt.format("YYYYMMDD")
 
     conn = _connection()
@@ -245,7 +244,6 @@ def log_edit(dt, minutes, reason):
 
 
 def edits(dt):
-    assert dt.datetime.tzname() == cfg.time_zone_name
     ymd = dt.format("YYYYMMDD")
 
     conn = _connection()
@@ -286,7 +284,6 @@ def log_state_change(state, reason):
 
 
 def logs(dt):
-    assert dt.datetime.tzname() == cfg.time_zone_name
     start_timestamp = dt.floor("day").to("UTC").timestamp
     end_timestamp = dt.ceil("day").to("UTC").timestamp
 

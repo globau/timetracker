@@ -1,14 +1,9 @@
 from functools import total_ordering
 
-import cfg
-
 
 @total_ordering
 class DateRange(object):
     def __init__(self, start_dt, end_dt):
-        assert start_dt.datetime.tzname() == cfg.time_zone_name
-        assert end_dt.datetime.tzname() == cfg.time_zone_name
-
         self._start_dt = start_dt.floor("minute")
         self._end_dt = end_dt.floor("minute")
         self.minutes = 0
