@@ -48,12 +48,21 @@ def _activate_venv():
 
 def _create_venv():
     if not venv_path.exists():
-        check_call(["virtualenv", "-p", "python3", "venv", "--quiet"], cwd=root_path)
+        # work around py3.3+, homebrew, and virtualenv issue
+        # https://bugs.python.org/issue22490
+        # https://github.com/pypa/virtualenv/issues/845
+        env = os.environ.copy()
+        env.pop("__PYVENV_LAUNCHER__", None)
+
+        check_call(
+            ["virtualenv", "-p", "python3", "venv", "--quiet"], cwd=root_path, env=env
+        )
 
     check_call(
         ["%s/pip" % bin_path]
         + ["install", "--no-warn-script-location", "--upgrade", "--quiet"]
         + ["-r", str(root_path / "src/requirements.txt")]
+        + ["pip"]
     )
 
 
