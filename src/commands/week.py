@@ -82,4 +82,4 @@ def week(date, status):
         )
 
     if status:
-        invoke(["status"])
+        invoke(["status", "--no-daemon"])
