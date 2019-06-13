@@ -4,7 +4,7 @@ import cfg
 import database
 import state
 import ui
-from main import cli, click
+from main import cli, click, invoke
 from terminal import coloured
 
 
@@ -82,4 +82,4 @@ def week(date, status):
         )
 
     if status:
-        cli(["status"])
+        invoke(["status"])

@@ -16,6 +16,13 @@ def cli():
     pass
 
 
+def invoke(args):
+    try:
+        cli(args)
+    except SystemExit:
+        pass
+
+
 def main():
     setup_logger_file(cfg.log_file)
 

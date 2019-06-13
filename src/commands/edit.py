@@ -1,7 +1,7 @@
 import database
 import ui
 from harness import Error
-from main import cli, click
+from main import cli, click, invoke
 
 
 @click.argument("reason", nargs=-1)
@@ -52,4 +52,4 @@ def edit(date, adjust, reason):
     # insert into db and show summary
     database.log_edit(dt, adjust_mins, reason)
 
-    cli(["day"])
+    invoke(["day"])
