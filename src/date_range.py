@@ -1,5 +1,7 @@
 from functools import total_ordering
 
+from ui import plural
+
 
 @total_ordering
 class DateRange(object):
@@ -55,6 +57,14 @@ class DateRange(object):
     @property
     def end_ymd(self):
         return self._end_dt.format("YYYYMMDD")
+
+    @property
+    def date_time_str(self):
+        return "%s - %s (%s)" % (
+            self._start_dt.format("Do MMM YYYY HH:mm"),
+            self._end_dt.format("Do MMM YYYY HH:mm"),
+            plural(self.minutes, "min"),
+        )
 
     def _calc_minutes(self):
         self.minutes = round((self._end_dt - self._start_dt).total_seconds() / 60)

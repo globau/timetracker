@@ -9,6 +9,7 @@ import cfg
 from date_range import DateRange
 from datetime_util import hms
 from harness import logger
+from ui import plural
 
 _conn = None
 
@@ -309,3 +310,68 @@ def logs(dt):
                 logger.debug(result[-1])
 
     return result
+
+
+def consistency_check():
+    conn = _connection()
+
+    logger.info("checking database consistency")
+    found_issues = False
+
+    # duplicate start_time
+    with closing(conn.cursor()) as cursor:
+        cursor.execute(
+            "SELECT start_time FROM active GROUP BY start_time HAVING COUNT(*) > 1"
+        )
+        duplicate_start_times = [r[0] for r in cursor.fetchall()]
+
+    if duplicate_start_times:
+        found_issues = True
+        logger.warning(
+            "found %s with duplicates" % plural(len(duplicate_start_times), "time")
+        )
+
+        duplicate_row_ids = []
+        for start_time in duplicate_start_times:
+            start_dt = arrow.get(start_time).to(cfg.time_zone)
+
+            with closing(conn.cursor()) as cursor:
+                cursor.execute(
+                    "SELECT ROWID, end_time FROM active WHERE start_time = %s"
+                    % start_time
+                )
+
+                prev_end_time = None
+                inexact_duplicates = []
+                for row_id, end_time in cursor.fetchall():
+                    end_dt = arrow.get(end_time).to(cfg.time_zone)
+                    dtr = DateRange(start_dt, end_dt)
+                    logger.debug(dtr.date_time_str)
+
+                    # delete exact duplicates
+                    if end_time == prev_end_time:
+                        duplicate_row_ids.append(row_id)
+
+                    else:
+                        inexact_duplicates.append((row_id, dtr))
+
+                    prev_end_time = end_time
+
+                # keep just the shortest range
+                for r in inexact_duplicates:
+                    print(r[1].date_time_str)
+
+                inexact_duplicates.sort(key=lambda r: r[1].minutes)
+                inexact_duplicates.pop(0)
+                duplicate_row_ids.extend([r[0] for r in inexact_duplicates])
+
+        if duplicate_row_ids:
+            conn.execute(
+                "DELETE FROM active WHERE ROWID IN (%s)"
+                % ",".join([str(i) for i in duplicate_row_ids])
+            )
+            conn.commit()
+            logger.info("deleted %s" % plural(len(duplicate_row_ids), "identical item"))
+
+    if not found_issues:
+        logger.info("no issues found")

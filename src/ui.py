@@ -156,3 +156,7 @@ def input_ex(prompt, *, required=False, default=None, validator=None, options=No
     except KeyboardInterrupt:
         print("")
         sys.exit(1)
+
+
+def plural(count, item, *, suffix="s"):
+    return "{:,d} {}{}".format(count, item, "" if count == 1 else suffix)
