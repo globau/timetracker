@@ -66,6 +66,7 @@ def setup_logger_file(
         logging.Formatter(fmt="[%(asctime)s] %(message)s", datefmt="%Y-%m-%d %H:%M:%S")
     )
     lgr.addHandler(handler)
+    lgr.setLevel(logging.INFO)
 
 
 class MainWrapper(object):
