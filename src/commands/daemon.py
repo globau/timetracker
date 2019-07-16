@@ -15,8 +15,9 @@ def exit_handler():
 @cli.command(help="run as daemon (foreground)")
 def daemon():
     pid = launchd.pid_of()
-    if pid:
+    if pid and pid != os.getpid():
         raise Error("daemon already running (pid %s)" % pid)
+
     logger.info("daemon started (pid %s)" % os.getpid())
     atexit.register(exit_handler)
 

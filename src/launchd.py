@@ -45,7 +45,7 @@ def pid_of():
     ).splitlines():
         line = line.split("\t")
         if line[-1] == NAME:
-            return line[0]
+            return int(line[0])
     return None
 
 
