@@ -3,7 +3,8 @@ import os
 import time
 
 import cfg
-from harness import logger
+import launchd
+from harness import Error, logger
 from main import cli, invoke
 
 
@@ -13,6 +14,9 @@ def exit_handler():
 
 @cli.command(help="run as daemon (foreground)")
 def daemon():
+    pid = launchd.pid_of()
+    if pid:
+        raise Error("daemon already running (pid %s)" % pid)
     logger.info("daemon started (pid %s)" % os.getpid())
     atexit.register(exit_handler)
 
