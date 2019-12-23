@@ -66,6 +66,7 @@ is_away_file = dot_path / "is-away"
 away_now_file = dot_path / "away-now"
 log_file = dot_path / "timetracker.log"
 pid_file = dot_path / "timetracker.pid"
+lock_file = dot_path / "timetracker.lock"
 
 # state change handlers
 on_away_file = dot_path / "on-away"

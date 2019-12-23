@@ -1,11 +1,14 @@
 import atexit
+import errno
+import fcntl
 import os
 import time
 
 import cfg
-import launchd
 from harness import Error, logger
 from main import cli, invoke
+
+_LOCK_FH = 0
 
 
 def exit_handler():
@@ -14,9 +17,15 @@ def exit_handler():
 
 @cli.command(help="run as daemon (foreground)")
 def daemon():
-    pid = launchd.pid_of()
-    if pid and pid != os.getpid():
-        raise Error("daemon already running (pid %s)" % pid)
+    global _LOCK_FH
+
+    _LOCK_FH = open(cfg.lock_file, "w")
+    try:
+        fcntl.lockf(_LOCK_FH, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except IOError as e:
+        if e.errno not in (errno.EACCES, errno.EAGAIN):
+            raise
+        raise Error("daemon already running")
 
     logger.info("daemon started (pid %s)" % os.getpid())
     atexit.register(exit_handler)
