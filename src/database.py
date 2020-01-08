@@ -55,13 +55,13 @@ def _connection():
     global _conn
     if not _conn:
         filename = cfg.db_file
-        logger.debug("database: %s" % filename)
+        logger.debug("database: %s", filename)
         empty_db = not filename.exists()
         _conn = sqlite3.connect(filename)
         _conn.execute("PRAGMA foreign_keys = off")
         _conn.execute("PRAGMA temp_store = MEMORY")
         if logger.level == logging.DEBUG:
-            _conn.set_trace_callback(lambda sql: logger.debug("SQL> %s" % sql))
+            _conn.set_trace_callback(lambda sql: logger.debug("SQL> %s", sql))
         if empty_db:
             init_schema(_conn)
 
@@ -86,8 +86,7 @@ def current_range():
         return DateRange(
             arrow.get(row[0]).to(cfg.time_zone), arrow.get(row[1]).to(cfg.time_zone)
         )
-    else:
-        return None
+    return None
 
 
 def remove_empty_ranges():
@@ -119,8 +118,11 @@ def log_active():
             start_dt = arrow.get(existing[0])
             end_dt = arrow.get(existing[1])
             logger.debug(
-                "existing range: %s - %s (%s - %s)"
-                % (start_dt, end_dt, start_dt.timestamp, end_dt.timestamp)
+                "existing range: %s - %s (%s - %s)",
+                start_dt,
+                end_dt,
+                start_dt.timestamp,
+                end_dt.timestamp,
             )
         if dt.timestamp != existing[1]:
             conn.execute(
@@ -131,7 +133,7 @@ def log_active():
 
     else:
         # insert new range
-        logger.debug("creating new range: %s (%s)" % (dt, dt.timestamp))
+        logger.debug("creating new range: %s (%s)", dt, dt.timestamp)
         conn.execute(
             "INSERT INTO active(start_time, end_time) VALUES (?, ?)",
             (dt.timestamp, dt.timestamp),
@@ -144,7 +146,7 @@ def active_ranges(start_dt, end_dt):
 
     start_time = start_dt.to("UTC").timestamp
     end_time = end_dt.to("UTC").timestamp
-    logger.debug("%s (%s) - %s (%s)" % (start_dt, start_time, end_dt, end_time))
+    logger.debug("%s (%s) - %s (%s)", start_dt, start_time, end_dt, end_time)
 
     where = "(%s)" % ") OR (".join(
         [
@@ -189,31 +191,25 @@ def active_ranges(start_dt, end_dt):
                 row_start_dt = arrow.get(row[0]).to(cfg.time_zone)
                 row_end_dt = arrow.get(row[1]).to(cfg.time_zone)
                 logger.debug(
-                    "%s - %s (%s)"
-                    % (
-                        row_start_dt.format("YYYY-MM-DD HH:mm"),
-                        row_end_dt.format("YYYY-MM-DD HH:mm"),
-                        hms((row_end_dt - row_start_dt).total_seconds()),
-                    )
+                    "%s - %s (%s)",
+                    row_start_dt.format("YYYY-MM-DD HH:mm"),
+                    row_end_dt.format("YYYY-MM-DD HH:mm"),
+                    hms((row_end_dt - row_start_dt).total_seconds()),
                 )
 
                 # truncate if the range extends beyond requested start or end
                 if row_start_dt < start_dt:
                     logger.debug(
-                        "truncating start %s to %s"
-                        % (
-                            row_start_dt.format("YYYY-MM-DD HH:mm"),
-                            start_dt.format("YYYY-MM-DD HH:mm"),
-                        )
+                        "truncating start %s to %s",
+                        row_start_dt.format("YYYY-MM-DD HH:mm"),
+                        start_dt.format("YYYY-MM-DD HH:mm"),
                     )
                     row_start_dt = start_dt.clone()
                 if row_end_dt > end_dt:
                     logger.debug(
-                        "trimming end %s to %s"
-                        % (
-                            row_end_dt.format("YYYY-MM-DD HH:mm"),
-                            end_dt.format("YYYY-MM-DD HH:mm"),
-                        )
+                        "trimming end %s to %s",
+                        row_end_dt.format("YYYY-MM-DD HH:mm"),
+                        end_dt.format("YYYY-MM-DD HH:mm"),
                     )
                     row_end_dt = end_dt.clone()
 
@@ -328,7 +324,7 @@ def consistency_check():
     if duplicate_start_times:
         found_issues = True
         logger.warning(
-            "found %s with duplicates" % plural(len(duplicate_start_times), "time")
+            "found %s with duplicates", plural(len(duplicate_start_times), "time")
         )
 
         duplicate_row_ids = []
@@ -371,7 +367,7 @@ def consistency_check():
                 % ",".join([str(i) for i in duplicate_row_ids])
             )
             conn.commit()
-            logger.info("deleted %s" % plural(len(duplicate_row_ids), "identical item"))
+            logger.info("deleted %s", plural(len(duplicate_row_ids), "identical item"))
 
     if not found_issues:
         logger.info("no issues found")

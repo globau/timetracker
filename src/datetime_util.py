@@ -12,13 +12,11 @@ def pretty_timedelta(timedelta, *, strip_seconds=False):
     if hours > 0:
         if strip_seconds:
             return "%dh%dm" % (hours, minutes)
-        else:
-            return "%dh%dm%ds" % (hours, minutes, seconds)
+        return "%dh%dm%ds" % (hours, minutes, seconds)
     if minutes > 0:
         if strip_seconds:
             return "%dm" % minutes
-        else:
-            return "%dm%ds" % (minutes, seconds)
+        return "%dm%ds" % (minutes, seconds)
     return "%ds" % seconds
 
 

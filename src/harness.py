@@ -51,10 +51,10 @@ def setup_logger_file(
 
     if not force:
         if sys.stdout.isatty():
-            logger.debug("disabling logging to %s: connected to a tty" % filename)
+            logger.debug("disabling logging to %s: connected to a tty", filename)
             return
-        elif DEBUG:
-            logger.debug("disabling logging to %s: debugging" % filename)
+        if DEBUG:
+            logger.debug("disabling logging to %s: debugging", filename)
             return
 
     if not lgr:
@@ -69,7 +69,7 @@ def setup_logger_file(
     lgr.setLevel(logging.INFO)
 
 
-class MainWrapper(object):
+class MainWrapper:
     def __init__(self, main):
         setup_logger(logger)
 
@@ -106,7 +106,7 @@ class MainWrapper(object):
         except OSError as e:
             if e.filename:
                 # include filename in i/o errors
-                logger.error("%s: %s" % (e.strerror, e.filename))
+                logger.error("%s: %s", e.strerror, e.filename)
             else:
                 logger.error(e.strerror or e)
             sys.exit(1)
@@ -116,5 +116,5 @@ class MainWrapper(object):
             if logger.level == logging.DEBUG:
                 logger.error(traceback.format_exc())
             else:
-                logger.error("%s: %s" % (e.__class__.__name__, e))
+                logger.error("%s: %s", e.__class__.__name__, e)
             sys.exit(1)

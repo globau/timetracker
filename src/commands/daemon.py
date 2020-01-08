@@ -12,7 +12,7 @@ _LOCK_FH = 0
 
 
 def exit_handler():
-    logger.info("daemon stopped (pid %s)" % os.getpid())
+    logger.info("daemon stopped (pid %s)", os.getpid())
 
 
 @cli.command(help="run as daemon (foreground)")
@@ -27,7 +27,7 @@ def daemon():
             raise
         raise Error("daemon already running")
 
-    logger.info("daemon started (pid %s)" % os.getpid())
+    logger.info("daemon started (pid %s)", os.getpid())
     atexit.register(exit_handler)
 
     cfg.pid_file.write_text("%s\n" % os.getpid())
@@ -36,5 +36,5 @@ def daemon():
         invoke(["update"])
         delay = 60 - (time.time() - start_time)
         if delay > 0:
-            logger.debug("sleeping for %ss" % delay)
+            logger.debug("sleeping for %ss", delay)
             time.sleep(delay)

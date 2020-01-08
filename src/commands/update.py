@@ -13,8 +13,8 @@ def update():
     away_now_file = state.away_now_file()
     is_away = state.is_away()
 
-    logger.debug("idle time: %ss" % idle_time)
-    logger.debug("is away: %s" % is_away)
+    logger.debug("idle time: %ss", idle_time)
+    logger.debug("is away: %s", is_away)
 
     # check if there's a request to manually set as away
     if away_now_file:

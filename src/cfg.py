@@ -9,7 +9,7 @@ from harness import logger
 # paths
 dot_path = Path("~/.timetracker").expanduser()
 if not dot_path.exists():
-    logger.debug("creating %s" % dot_path)
+    logger.debug("creating %s", dot_path)
     dot_path.mkdir()
 root_path = Path(__file__).parent.parent.resolve()
 src_path = root_path / "src"
@@ -24,7 +24,7 @@ def _load_settings():
     # load settings, with fallback to default values
 
     try:
-        logger.debug("loading %s" % settings_file)
+        logger.debug("loading %s", settings_file)
         with open(settings_file) as f:
             settings = json.load(f)
     except FileNotFoundError:

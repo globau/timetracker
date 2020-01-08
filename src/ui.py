@@ -18,19 +18,19 @@ def parse_date(date_str, *, context):
 
     if context == "day":
         # today, yesterday, tomorrow
-        if date_str == "today" or date_str == "now":
+        if date_str in ("today", "now"):
             return arrow.now(tz=cfg.time_zone).floor("day")
-        if date_str == "yesterday" or date_str == "yes" or date_str == "prev":
+        if date_str in ("yesterday", "yes", "prev"):
             return arrow.now(tz=cfg.time_zone).shift(days=-1).floor("day")
-        if date_str == "tomorrow" or date_str == "tom" or date_str == "next":
+        if date_str in ("tomorrow", "tom", "next"):
             return arrow.now(tz=cfg.time_zone).shift(days=1).floor("day")
 
     elif context == "week":
         # today
-        if date_str == "today" or date_str == "now":
+        if date_str in ("today", "now"):
             return arrow.now(tz=cfg.time_zone).floor("day")
         # last week
-        if date_str == "last":
+        if date_str in ("last",):
             return arrow.now(tz=cfg.time_zone).floor("day").shift(days=-7)
 
     # yyyy-mm-dd, yyyy/mm/dd, yyyymmdd
@@ -79,11 +79,10 @@ def parse_adjustment(adjustment_str):
     if adjust_unit == "d":
         return 60 * (cfg.work_week / 5) * adjust_amount
 
-    elif adjust_unit == "h":
+    if adjust_unit == "h":
         return 60 * adjust_amount
 
-    else:
-        return adjust_amount
+    return adjust_amount
 
 
 def format_minutes(minutes):
@@ -95,10 +94,9 @@ def format_minutes(minutes):
 def format_minutes_relative(target, minutes):
     if minutes == target:
         return coloured("green", "⦗ %s⦘" % format_minutes(0))
-    elif minutes < target:
+    if minutes < target:
         return coloured("red", "⦗-%s⦘" % format_minutes(target - minutes))
-    else:
-        return coloured("green", "⦗+%s⦘" % format_minutes(minutes - target))
+    return coloured("green", "⦗+%s⦘" % format_minutes(minutes - target))
 
 
 def notify(*, away=False, back=False):

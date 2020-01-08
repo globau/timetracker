@@ -20,7 +20,7 @@ def set_away(*, away=False, back=False, reason=None):
     assert reason
 
     if away:
-        logger.debug("setting away: %s" % reason)
+        logger.debug("setting away: %s", reason)
         database.log_state_change("away", reason)
         database.remove_empty_ranges()
 
@@ -28,11 +28,11 @@ def set_away(*, away=False, back=False, reason=None):
         cfg.is_away_file.touch(exist_ok=True)
 
         if cfg.on_away_file.exists():
-            logger.debug("executing: %s" % cfg.on_away_file)
+            logger.debug("executing: %s", cfg.on_away_file)
             subprocess.Popen([str(cfg.on_away_file)], cwd=cfg.dot_path)
 
     else:
-        logger.debug("setting back: %s" % reason)
+        logger.debug("setting back: %s", reason)
         database.log_state_change("back", reason)
 
         with suppress(FileNotFoundError):
@@ -41,7 +41,7 @@ def set_away(*, away=False, back=False, reason=None):
             cfg.away_now_file.unlink()
 
         if cfg.on_back_file.exists():
-            logger.debug("executing: %s" % cfg.on_back_file)
+            logger.debug("executing: %s", cfg.on_back_file)
             subprocess.Popen([str(cfg.on_back_file)], cwd=cfg.dot_path)
 
 

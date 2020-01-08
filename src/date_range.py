@@ -4,7 +4,7 @@ from ui import plural
 
 
 @total_ordering
-class DateRange(object):
+class DateRange:
     def __init__(self, start_dt, end_dt):
         self._start_dt = start_dt.floor("minute")
         self._end_dt = end_dt.floor("minute")

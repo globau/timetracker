@@ -99,7 +99,7 @@ def _install_state_scripts():
     for src_file in scripts_path.glob("*"):
         dst_file = cfg.dot_path / src_file.name
         if not dst_file.exists():
-            logger.debug("%s -> %s" % (src_file, dst_file))
+            logger.debug("%s -> %s", src_file, dst_file)
             shutil.copy(str(src_file), str(dst_file))
 
 
