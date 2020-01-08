@@ -1,11 +1,10 @@
-import os
-import sys
+import subprocess
 from contextlib import suppress
 
 import cfg
 import database
 from harness import logger
-from process import check_call, check_output
+from process import check_output
 
 
 def away_now_file():
@@ -29,10 +28,8 @@ def set_away(*, away=False, back=False, reason=None):
         cfg.is_away_file.touch(exist_ok=True)
 
         if cfg.on_away_file.exists():
-            if os.fork():
-                return
-            check_call([str(cfg.on_away_file)], cwd=cfg.dot_path)
-            sys.exit(0)
+            logger.debug("executing: %s" % cfg.on_away_file)
+            subprocess.Popen([str(cfg.on_away_file)], cwd=cfg.dot_path)
 
     else:
         logger.debug("setting back: %s" % reason)
@@ -44,10 +41,8 @@ def set_away(*, away=False, back=False, reason=None):
             cfg.away_now_file.unlink()
 
         if cfg.on_back_file.exists():
-            if os.fork():
-                return
-            check_call([str(cfg.on_back_file)], cwd=cfg.dot_path)
-            sys.exit(0)
+            logger.debug("executing: %s" % cfg.on_back_file)
+            subprocess.Popen([str(cfg.on_back_file)], cwd=cfg.dot_path)
 
 
 def idle_time():
