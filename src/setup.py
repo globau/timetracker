@@ -1,4 +1,5 @@
 import os
+import site
 import sys
 from pathlib import Path
 from subprocess import check_call
@@ -40,9 +41,30 @@ def _activate_venv():
         print("timetracker not configured: run 'tt configure'")
         sys.exit(1)
 
-    with open(activate_file) as f:
-        code = compile(f.read(), activate_file, "exec")
-    exec(code, dict(__file__=activate_file))
+    # setup env
+    os.environ["PATH"] = os.pathsep.join(
+        [str(bin_path)] + os.environ.get("PATH", "").split(os.pathsep)
+    )
+    os.environ["VIRTUAL_ENV"] = str(venv_path)
+    site.addsitedir(
+        str(
+            venv_path
+            / "lib"
+            / "python{}.{}".format(*sys.version_info)
+            / "site-packages"
+        )
+    )
+
+    # setup path
+    prev_path = set(sys.path)
+    new_path = list(sys.path)
+    sys.path[:] = [p for p in new_path if p not in prev_path] + [
+        p for p in new_path if p in prev_path
+    ]
+
+    # setup sys
+    sys.real_prefix = sys.prefix
+    sys.prefix = str(venv_path)
     sys.executable = str(bin_path / "python")
 
 
@@ -54,9 +76,7 @@ def _create_venv():
         env = os.environ.copy()
         env.pop("__PYVENV_LAUNCHER__", None)
 
-        check_call(
-            ["virtualenv", "-p", "python3", "venv", "--quiet"], cwd=root_path, env=env
-        )
+        check_call(["python3", "-m", "venv", "venv"], cwd=root_path, env=env)
 
     check_call(
         ["%s/pip" % bin_path]
