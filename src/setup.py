@@ -141,6 +141,7 @@ def _configure_main():
 
     logger.info("configuring timetracker")
     is_first_run = not cfg.settings_file.exists()
+    is_running = launchd.pid_of() is not None
 
     settings = {
         "work_week": ui.input_ex(
@@ -153,14 +154,12 @@ def _configure_main():
         ),
     }
 
-    run_on_login = (
-        ui.input_ex(
-            "Run timetracker on login?",
-            options="yn",
-            default="y" if launchd.pid_of() is not None else "n",
-        )
-        == "y"
-    )
+    if is_running:
+        start = True
+        stop = ui.input_ex("Stop timetracker?", options="yn", default="n") == "y"
+    else:
+        start = ui.input_ex("Start timetracker?", options="yn", default="y") == "y"
+        stop = False
 
     cfg.update_settings(settings, write_to_disk=True)
 
@@ -172,9 +171,9 @@ def _configure_main():
 
     _install_state_scripts()
 
-    if run_on_login:
+    if start and not stop:
         launchd.install()
-    else:
+    if stop:
         launchd.uninstall()
 
     logger.info("done")

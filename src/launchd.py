@@ -1,9 +1,10 @@
+import os
 import sys
 from pathlib import Path
 
 import cfg
 from harness import Error, logger
-from process import call, check_call, check_output
+from process import check_call, check_output, check_outputs
 
 NAME = "uno.glob.timetracker"
 LAUNCHD_FILE = Path("~/Library/LaunchAgents/%s.plist" % NAME).expanduser()
@@ -49,6 +50,14 @@ def pid_of():
     return None
 
 
+def _start_daemon():
+    check_call(["launchctl", "bootstrap", "gui/%s" % os.getuid(), LAUNCHD_FILE])
+
+
+def _stop_daemon():
+    check_outputs(["launchctl", "unload", LAUNCHD_FILE])
+
+
 def install():
     tt_file = cfg.src_path.parent / "tt"
     py_file = sys.executable
@@ -63,7 +72,7 @@ def install():
     if pid_of() is None:
         # not installed - load (and start)
         logger.info("starting timetracker daemon")
-        check_call(["launchctl", "load", LAUNCHD_FILE])
+        _start_daemon()
         if pid_of() is None:
             logger.error("failed to install launchd config")
             sys.exit(1)
@@ -76,8 +85,7 @@ def install():
 def uninstall():
     if pid_of() is not None:
         logger.info("uninstalling timetracker daemon")
-        check_call(["launchctl", "unload", LAUNCHD_FILE])
-        call(["launchctl", "remove", LAUNCHD_FILE])
+        _stop_daemon()
 
     if LAUNCHD_FILE.exists():
         LAUNCHD_FILE.unlink()
@@ -88,5 +96,5 @@ def restart():
         raise Error("timetracker daemon is not installed")
 
     logger.info("restarting timetracker daemon")
-    check_call(["launchctl", "unload", LAUNCHD_FILE])
-    check_call(["launchctl", "load", LAUNCHD_FILE])
+    _stop_daemon()
+    _start_daemon()
