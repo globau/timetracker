@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+import types
 from collections import namedtuple
 from contextlib import closing
 
@@ -11,7 +12,7 @@ from datetime_util import hms
 from harness import logger
 from ui import plural
 
-_conn = None
+G = types.SimpleNamespace(conn=None)
 
 
 DateEdit = namedtuple("DateEdit", ["ymd", "minutes", "reason"])
@@ -52,20 +53,19 @@ def init_schema(conn=None):
 
 
 def _connection():
-    global _conn
-    if not _conn:
+    if not G.conn:
         filename = cfg.db_file
         logger.debug("database: %s", filename)
         empty_db = not filename.exists()
-        _conn = sqlite3.connect(filename)
-        _conn.execute("PRAGMA foreign_keys = off")
-        _conn.execute("PRAGMA temp_store = MEMORY")
+        G.conn = sqlite3.connect(filename)
+        G.conn.execute("PRAGMA foreign_keys = off")
+        G.conn.execute("PRAGMA temp_store = MEMORY")
         if logger.level == logging.DEBUG:
-            _conn.set_trace_callback(lambda sql: logger.debug("SQL> %s", sql))
+            G.conn.set_trace_callback(lambda sql: logger.debug("SQL> %s", sql))
         if empty_db:
-            init_schema(_conn)
+            init_schema(G.conn)
 
-    return _conn
+    return G.conn
 
 
 def current_range():

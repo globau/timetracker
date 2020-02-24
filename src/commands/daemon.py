@@ -3,12 +3,13 @@ import errno
 import fcntl
 import os
 import time
+import types
 
 import cfg
 from harness import Error, logger
 from main import cli, invoke
 
-_LOCK_FH = 0
+G = types.SimpleNamespace(lock_fh=0)
 
 
 def exit_handler():
@@ -17,11 +18,9 @@ def exit_handler():
 
 @cli.command(help="run as daemon (foreground)")
 def daemon():
-    global _LOCK_FH
-
-    _LOCK_FH = open(cfg.lock_file, "w")
+    G.lock_fh = open(cfg.lock_file, "w")
     try:
-        fcntl.lockf(_LOCK_FH, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        fcntl.lockf(G.lock_fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
     except IOError as e:
         if e.errno not in (errno.EACCES, errno.EAGAIN):
             raise

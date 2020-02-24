@@ -7,12 +7,11 @@ import cfg
 from click_alias import ClickAliasedGroup
 from harness import setup_logger_file
 
-click = click
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 
 @click.group(cls=ClickAliasedGroup, context_settings=CONTEXT_SETTINGS)
-def cli():
+def cli(*_):
     pass
 
 

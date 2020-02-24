@@ -38,6 +38,7 @@ def _load_settings():
 
 
 def update_settings(settings, *, write_to_disk=False):
+    # pylint: disable=global-statement
     global work_week
     global auto_away_time
 

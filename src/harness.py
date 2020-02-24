@@ -1,5 +1,6 @@
 import contextlib
 import logging
+import logging.handlers
 import os
 import sys
 import traceback
@@ -47,8 +48,6 @@ def setup_logger(lgr=None):
 def setup_logger_file(
     filename, lgr=None, *, when="d", interval=1, backups=7, force=False
 ):
-    import logging.handlers
-
     if not force:
         if sys.stdout.isatty():
             logger.debug("disabling logging to %s: connected to a tty", filename)
@@ -111,7 +110,7 @@ class MainWrapper:
                 logger.error(e.strerror or e)
             sys.exit(1)
 
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             # only show stack when debugging
             if logger.level == logging.DEBUG:
                 logger.error(traceback.format_exc())

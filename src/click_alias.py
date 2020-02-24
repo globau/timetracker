@@ -31,7 +31,7 @@ class ClickAliasedGroup(click.Group):
         # (ab)use formatter to inject aliases into help description
         assert isinstance(formatter, click.HelpFormatter)
 
-        formatter._aliases = self._aliases
+        formatter._aliases = self._aliases  # pylint: disable=protected-access
 
         formatter.__class__ = AliasFormatter
         super().format_commands(ctx, formatter)
@@ -41,6 +41,7 @@ class ClickAliasedGroup(click.Group):
 # noinspection PyUnresolvedReferences
 class AliasFormatter(click.HelpFormatter):
     def write_dl(self, rows, col_max=30, col_spacing=2):
+        # pylint: disable=no-member
         new_rows = []
         for row in rows:
             name, help_msg = row
