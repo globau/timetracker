@@ -38,7 +38,6 @@ def edit(date, adjust, reason):
         minutes += dtr.minutes
 
     edits = database.edits(dt)
-    minutes = 0
     for e in edits:
         minutes += e.minutes
 
