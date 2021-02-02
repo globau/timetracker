@@ -45,7 +45,7 @@ def pid_of():
         ["launchctl", "list"], debug_log_output=False
     ).splitlines():
         line = line.split("\t")
-        if line[-1] == NAME:
+        if line[-1] == NAME and line[0] != "-":
             return int(line[0])
     return None
 
