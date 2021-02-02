@@ -87,9 +87,10 @@ def _create_venv():
 
 
 def _install_state_scripts():
+    import shutil
+
     import cfg
     from harness import logger
-    import shutil
 
     if cfg.on_away_file.exists() or cfg.on_back_file.exists():
         return
@@ -136,7 +137,6 @@ def _configure_main():
     import database
     import launchd
     import ui
-
     from harness import logger
 
     logger.info("configuring timetracker")

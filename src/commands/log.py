@@ -11,7 +11,10 @@ def log(date):
     print(dt.format("ddd Do MMM"))
     logs = database.logs(dt)
     if logs:
-        for l in logs:
-            print("%s %s %s" % (l.dt.format("HH:mm:ss"), l.state.upper(), l.reason))
+        for entry in logs:
+            print(
+                "%s %s %s"
+                % (entry.dt.format("HH:mm:ss"), entry.state.upper(), entry.reason)
+            )
     else:
         print("(empty)")
